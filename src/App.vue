@@ -8,8 +8,12 @@
       <p>Last Name: {{ userInfo.last_name }}</p>
     </div>
     <button @click="getUserInfo">Get User Info</button>
+    <div v-if="error">
+      <p>Error: {{ error.message }}</p>
+    </div>
   </div>
 </template>
+
 <script>
 window.fbAsyncInit = function () {
   FB.init({
@@ -38,6 +42,7 @@ export default {
   data() {
     return {
       userInfo: null,
+      error: null,
     };
   },
   methods: {
@@ -47,6 +52,7 @@ export default {
         { fields: "id,name,email,first_name,last_name" },
         (response) => {
           if (response.error) {
+            this.error = response.error;
             console.log(response.error);
           } else {
             this.userInfo = response;
