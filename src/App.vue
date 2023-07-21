@@ -3,9 +3,7 @@
     <div v-if="userInfo">
       <p>User ID: {{ userInfo.id }}</p>
       <p>Name: {{ userInfo.name }}</p>
-      <p>Email: {{ userInfo.email }}</p>
-      <p>First Name: {{ userInfo.first_name }}</p>
-      <p>Last Name: {{ userInfo.last_name }}</p>
+      <a :href="userInfo.link">Profile Link</a>
     </div>
     <button @click="getUserInfo">Get User Info</button>
     <div v-if="error">
@@ -41,7 +39,7 @@ export default {
             console.log("User cancelled login or did not fully authorize.");
           }
         },
-        { scope: "public_profile,user_link" } // Specify the permissions your app needs
+        { scope: "public_profile,user_link", auth_type: "rerequest" } // Specify the permissions your app needs
       );
     },
   },
