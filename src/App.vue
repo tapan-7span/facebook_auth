@@ -15,29 +15,6 @@
 </template>
 
 <script>
-window.fbAsyncInit = function () {
-  FB.init({
-    appId: "290647546838436",
-    cookie: true,
-    xfbml: true,
-    version: "v17.0",
-  });
-
-  FB.AppEvents.logPageView();
-};
-
-(function (d, s, id) {
-  var js,
-    fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {
-    return;
-  }
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://connect.facebook.net/en_US/sdk.js";
-  fjs.parentNode.insertBefore(js, fjs);
-})(document, "script", "facebook-jssdk");
-
 export default {
   data() {
     return {
@@ -47,19 +24,51 @@ export default {
   },
   methods: {
     getUserInfo() {
-      FB.api(
-        "/me",
-        { fields: "id,name,email,first_name,last_name" },
+      FB.login(
         (response) => {
-          if (response.error) {
-            this.error = response.error;
-            console.log(response.error);
+          if (response.authResponse) {
+            // Access token obtained, make the API call
+            FB.api("/me", { fields: "id,name,link" }, (response) => {
+              if (response.error) {
+                this.error = response.error;
+                console.log(response.error);
+              } else {
+                this.userInfo = response;
+              }
+            });
           } else {
-            this.userInfo = response;
+            // User didn't authorize the app, handle this case
+            console.log("User cancelled login or did not fully authorize.");
           }
-        }
+        },
+        { scope: "public_profile,user_link" } // Specify the permissions your app needs
       );
     },
+  },
+  mounted() {
+    // The Facebook SDK initialization code remains the same
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "290647546838436", // Replace with your Facebook App ID
+        cookie: true,
+        xfbml: true,
+        version: "v17.0",
+      });
+
+      FB.AppEvents.logPageView();
+    };
+
+    (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
   },
 };
 </script>
