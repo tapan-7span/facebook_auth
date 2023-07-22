@@ -5,6 +5,7 @@
       <p>Name: {{ userInfo.name }}</p>
       <a :href="userInfo.link">Profile Link</a>
     </div>
+    <br />
     <button @click="getUserInfo">Get User Info</button>
     <div v-if="error">
       <p>Error: {{ error.message }}</p>
@@ -22,27 +23,58 @@ export default {
   },
   methods: {
     getUserInfo() {
-      FB.login(
-        (response) => {
-          if (response.authResponse) {
-            // Access token obtained, make the API call
-            FB.api("/me", { fields: "id,name,link" }, (response) => {
-              if (response.error) {
-                this.error = response.error;
-                console.log(response.error);
+      FB.getLoginStatus((response) => {
+        if (response.status === "connected") {
+          // The user is already logged in, force the login dialog
+          FB.login(
+            (response) => {
+              if (response.authResponse) {
+                // Access token obtained, make the API call
+                FB.api("/me", { fields: "id,name,link" }, (response) => {
+                  if (response.error) {
+                    this.error = response.error;
+                    console.log(response.error);
+                  } else {
+                    this.userInfo = response;
+                  }
+                });
               } else {
-                this.userInfo = response;
+                // User didn't authorize the app, handle this case
+                console.log("User cancelled login or did not fully authorize.");
               }
-            });
-          } else {
-            // User didn't authorize the app, handle this case
-            console.log("User cancelled login or did not fully authorize.");
-          }
-        },
-        { scope: "public_profile,user_link", auth_type: "rerequest" } // Specify the permissions your app needs
-      );
+            },
+            {
+              scope: "public_profile,user_link",
+              auth_type: "rerequest",
+              forceServerAuth: true,
+            }
+          );
+        } else {
+          // The user is not logged in or hasn't authorized the app, show login dialog
+          FB.login(
+            (response) => {
+              if (response.authResponse) {
+                // Access token obtained, make the API call
+                FB.api("/me", { fields: "id,name,link" }, (response) => {
+                  if (response.error) {
+                    this.error = response.error;
+                    console.log(response.error);
+                  } else {
+                    this.userInfo = response;
+                  }
+                });
+              } else {
+                // User didn't authorize the app, handle this case
+                console.log("User cancelled login or did not fully authorize.");
+              }
+            },
+            { scope: "public_profile,user_link", auth_type: "rerequest" }
+          );
+        }
+      });
     },
   },
+
   mounted() {
     // The Facebook SDK initialization code remains the same
     window.fbAsyncInit = function () {
