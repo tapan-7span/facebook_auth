@@ -63,6 +63,8 @@ export default {
                     console.log(response.error);
                   } else {
                     console.log("Main Response" + response);
+                    this.WebVersion = version;
+
                     this.userInfo = response;
                   }
                 });
