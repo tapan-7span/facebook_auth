@@ -50,67 +50,67 @@ export default {
   },
   methods: {
     getUserInfo() {
-      FB.getLoginStatus((response) => {
-        if (response.status === "connected") {
-          // The user is already logged in, force the login dialog
-          FB.login(
-            (response) => {
-              console.log("FB.login" + JSON.stringify(response));
-              if (response.authResponse) {
-                this.FBResponse = response.authResponse;
-                FB.api(
-                  // Access token obtained, make the API call
-                  "/me",
-                  { fields: "id,name,link" },
-                  (response) => {
-                    if (response.error) {
-                      this.error = response.error;
-                      console.log(response.error);
-                    } else {
-                      console.log("Main Response" + JSON.stringify(response));
-                      this.WebVersion = version;
+      // FB.getLoginStatus((response) => {
+      //   if (response.status === "connected") {
+      //     // The user is already logged in, force the login dialog
+      //     FB.login(
+      //       (response) => {
+      //         console.log("FB.login" + JSON.stringify(response));
+      //         if (response.authResponse) {
+      //           this.FBResponse = response.authResponse;
+      //           FB.api(
+      //             // Access token obtained, make the API call
+      //             "/me",
+      //             { fields: "id,name,link" },
+      //             (response) => {
+      //               if (response.error) {
+      //                 this.error = response.error;
+      //                 console.log(response.error);
+      //               } else {
+      //                 console.log("Main Response" + JSON.stringify(response));
+      //                 this.WebVersion = version;
 
-                      this.userInfo = response;
-                    }
-                  }
-                );
+      //                 this.userInfo = response;
+      //               }
+      //             }
+      //           );
+      //         } else {
+      //           // User didn't authorize the app, handle this case
+      //           console.log("User cancelled login or did not fully authorize.");
+      //           console.log("Else Response" + response);
+      //         }
+      //       },
+      //       {
+      //         scope: "public_profile,user_link",
+      //         auth_type: "rerequest",
+      //         forceServerAuth: true,
+      //       }
+      //     );
+      //   } else {
+      //     // The user is not logged in or hasn't authorized the app, show login dialog
+      //   }
+      // });
+      FB.login(
+        (response) => {
+          if (response.authResponse) {
+            // Access token obtained, make the API call
+            FB.api("/me", { fields: "id,name,link" }, (response) => {
+              if (response.error) {
+                this.error = response.error;
+                console.log(response.error);
               } else {
-                // User didn't authorize the app, handle this case
-                console.log("User cancelled login or did not fully authorize.");
-                console.log("Else Response" + response);
+                console.log("API 2nd Login:" + JSON.stringify(response));
+                this.WebVersion = version;
+                this.userInfo = response;
               }
-            },
-            {
-              scope: "public_profile,user_link",
-              auth_type: "rerequest",
-              forceServerAuth: true,
-            }
-          );
-        } else {
-          // The user is not logged in or hasn't authorized the app, show login dialog
-          FB.login(
-            (response) => {
-              if (response.authResponse) {
-                // Access token obtained, make the API call
-                FB.api("/me", { fields: "id,name,link" }, (response) => {
-                  if (response.error) {
-                    this.error = response.error;
-                    console.log(response.error);
-                  } else {
-                    console.log("API 2nd Login:" + JSON.stringify(response));
-                    this.WebVersion = version;
-                    this.userInfo = response;
-                  }
-                });
-              } else {
-                // User didn't authorize the app, handle this case
-                console.log("User cancelled login or did not fully authorize.");
-              }
-            },
-            { scope: "public_profile,user_link", auth_type: "rerequest" }
-          );
-        }
-      });
+            });
+          } else {
+            // User didn't authorize the app, handle this case
+            console.log("User cancelled login or did not fully authorize.");
+          }
+        },
+        { scope: "public_profile,user_link", auth_type: "rerequest" }
+      );
     },
   },
 
