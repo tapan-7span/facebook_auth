@@ -45,6 +45,7 @@ export default {
       userInfo: null,
       error: null,
       WebVersion: null,
+      FBResponse: null,
     };
   },
   methods: {
@@ -56,18 +57,23 @@ export default {
             (response) => {
               console.log("FB.login" + JSON.stringify(response));
               if (response.authResponse) {
-                // Access token obtained, make the API call
-                FB.api("/me", { fields: "id,name,link" }, (response) => {
-                  if (response.error) {
-                    this.error = response.error;
-                    console.log(response.error);
-                  } else {
-                    console.log("Main Response" + JSON.stringify(response));
-                    this.WebVersion = version;
+                this.FBResponse = response.authResponse;
+                FB.api(
+                  // Access token obtained, make the API call
+                  "/me",
+                  { fields: "id,name,link" },
+                  (response) => {
+                    if (response.error) {
+                      this.error = response.error;
+                      console.log(response.error);
+                    } else {
+                      console.log("Main Response" + JSON.stringify(response));
+                      this.WebVersion = version;
 
-                    this.userInfo = response;
+                      this.userInfo = response;
+                    }
                   }
-                });
+                );
               } else {
                 // User didn't authorize the app, handle this case
                 console.log("User cancelled login or did not fully authorize.");
