@@ -119,7 +119,7 @@ export default {
     window.fbAsyncInit = function () {
       FB.init({
         appId: "290647546838436", // Replace with your Facebook App ID
-        cookie: true,
+        cookie: false,
         xfbml: true,
         version: "v17.0",
       });
