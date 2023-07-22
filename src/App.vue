@@ -54,7 +54,7 @@ export default {
           // The user is already logged in, force the login dialog
           FB.login(
             (response) => {
-              console.log("FB.login" + response);
+              console.log("FB.login" + JSON.stringify(response));
               if (response.authResponse) {
                 // Access token obtained, make the API call
                 FB.api("/me", { fields: "id,name,link" }, (response) => {
@@ -62,7 +62,7 @@ export default {
                     this.error = response.error;
                     console.log(response.error);
                   } else {
-                    console.log("Main Response" + response);
+                    console.log("Main Response" + JSON.stringify(response));
                     this.WebVersion = version;
 
                     this.userInfo = response;
