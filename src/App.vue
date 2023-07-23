@@ -91,6 +91,7 @@ export default {
       // });
       FB.login(
         (response) => {
+          console.log("FB Login Response : " + JSON.stringify(response));
           if (response.authResponse) {
             // Access token obtained, make the API call
             FB.api("/me", { fields: "id,name,link" }, (response) => {
@@ -118,7 +119,7 @@ export default {
     window.fbAsyncInit = function () {
       FB.init({
         appId: "290647546838436", // Replace with your Facebook App ID
-        
+
         xfbml: true,
         version: "v17.0",
       });
